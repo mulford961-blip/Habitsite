@@ -641,16 +641,16 @@
       return dates;
     };
 
-    const calculateIdentityScore = (identityId) => {
+    const calculateIdentityScore = (identityId, last7Days) => {
       const habits = state.habits.filter(h => h.category === identityId && !h.archived);
       if (habits.length === 0) return 0;
 
-      const last7Days = getLast7Days();
+      const dates = last7Days || getLast7Days();
       let totalPoints = 0;
       let maxPoints = habits.length * 7;
 
       habits.forEach(habit => {
-        last7Days.forEach(date => {
+        dates.forEach(date => {
           const status = habit.history[date];
           if (status === 'full') totalPoints += 1;
           else if (status === 'emergency') totalPoints += 0.5;
@@ -667,8 +667,9 @@
         catStatus.textContent = `Guardian Cat • XP: ${state.catXP || 0}`;
       }
 
+      const last7Days = getLast7Days();
       statsEl.innerHTML = state.identities.map((identity, index) => {
-        const score = calculateIdentityScore(identity.id);
+        const score = calculateIdentityScore(identity.id, last7Days);
         const level = Math.floor(score / 20) + 1; // 1 to 5+
 
         return `
