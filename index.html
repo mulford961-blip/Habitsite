@@ -701,9 +701,13 @@
         return;
       }
 
+      // Optimization: Create O(1) lookup map for identities
+      const identityMap = new Map();
+      state.identities.forEach(id => identityMap.set(id.id, id));
+
       questListEl.innerHTML = activeHabits.map(habit => {
         const status = habit.history[today]; // 'full', 'emergency', 'missed' or undefined
-        const identity = state.identities.find(id => id.id === habit.category);
+        const identity = identityMap.get(habit.category);
         const color = identity ? identity.color : '#fff';
 
         // Emergency Mode Logic
